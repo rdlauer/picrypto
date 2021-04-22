@@ -3,7 +3,7 @@ import json  # optional - for debugging json payloads
 import notecard
 from periphery import I2C
 from dateutil.parser import parse
-from datetime import datetime
+from datetime import datetime, timedelta
 import keys
 
 # init the Notecard (more info at dev.blues.io)
@@ -12,16 +12,15 @@ port = I2C("/dev/i2c-1")
 card = notecard.OpenI2C(port, 0, 0)
 req = {"req": "hub.set"}
 req["product"] = productUID
-req["mode"] = "periodic"
-req["outbound"] = 600
+req["mode"] = "continuous"
 # print(json.dumps(req)) # print/debug json
 rsp = card.Transaction(req)
-# print(rsp) # print debug request
+# print(rsp)  # print debug request
 
 
 def main(start_timestamp):
     """ loops through log file to get crypto hash rate """
-    with open("log.txt") as fp:
+    with open("/home/pi/Documents/apps/xmrig/build/log.txt") as fp:
         lines = fp.readlines()
         for line in lines:
             # check if this line starts with a valid date and contains "miner"
@@ -31,8 +30,8 @@ def main(start_timestamp):
                 if dt >= start_timestamp:
                     send_note(line, dt)
 
-    time.sleep(300)  # check again in 5 minutes
-    main(datetime.now())
+    time.sleep(60)  # check again in 1 minute
+    main(datetime.now() - timedelta(minutes=1))
 
 
 def send_note(line, dt):
@@ -44,10 +43,10 @@ def send_note(line, dt):
 
     req = {"req": "note.add"}
     req["file"] = "crypto.qo"
-    req["body"] = {"rate": hash_rate}
-    req["body"] = {"time": ms_time}
+    req["body"] = {"rate": hash_rate, "time": ms_time}
+    req["sync"] = True
     rsp = card.Transaction(req)
-    # print(rsp) # debug/print request
+    # print(rsp)  # debug/print request
 
 
 def is_date(string, fuzzy=False):

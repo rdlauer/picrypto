@@ -2,9 +2,10 @@
 
 Mine some cryptocurrency using the sun and your Raspberry Pi!
 
-> View the complete tutorial over at [Hackster.io](NEED LINK)
+> View the complete tutorial over at
+> [Hackster.io](https://www.hackster.io/rob-lauer/solar-powered-crypto-mining-with-raspberry-pi-64adee)
 
-![completed project](images/completed-web.jpg)
+![completed project](images/completed-project.jpg)
 
 **Hardware:**
 
